@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Working with Radicals</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: an exercise-book sheet laid on a faint graph-paper mat; one reading column, sticky section tabs, tools set apart as ruled workbench panels */
+:root{
+  --paper:#eef2f9; --grid:#dbe3f1; --sheet:#ffffff; --ink:#17203b; --muted:#56607b; --rule:#d3dbea;
+  --accent:#2443c4; --accent-soft:#e8edfd; --accent-ink:#ffffff;
+  --red:#c2303d; --red-soft:#fcebed; --green:#1d7a4c; --green-soft:#e2f4e9; --amber:#a85700;
+  --mark:#ffe27a; --mark-ink:#17203b;
+  --g0:#e9ecf2; --g1:#d9e2ff; --g2:#ffe1c4; --g3:#ead8fb; --g4:#cdeee7;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-math:'STIX Two Text','Cambria Math','Cambria','Times New Roman',serif;
+  --rad-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24' preserveAspectRatio='none'%3E%3Cpath d='M.6 14.2 3.4 12.4 6.6 22.6 11 .9H12' fill='none' stroke='%23000' stroke-width='1.7'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f121a; --grid:#181e2b; --sheet:#161a25; --ink:#e7eaf3; --muted:#9ba4ba; --rule:#2a3144;
+  --accent:#93a8ff; --accent-soft:#1f2950; --accent-ink:#0d1330;
+  --red:#ff7d88; --red-soft:#3a1c22; --green:#62d49c; --green-soft:#132e1f; --amber:#ffb15a;
+  --mark:#5a490c; --mark-ink:#fff2c2;
+  --g0:#262b38; --g1:#24305d; --g2:#4a3015; --g3:#382553; --g4:#163d37;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f121a; --grid:#181e2b; --sheet:#161a25; --ink:#e7eaf3; --muted:#9ba4ba; --rule:#2a3144;
+  --accent:#93a8ff; --accent-soft:#1f2950; --accent-ink:#0d1330;
+  --red:#ff7d88; --red-soft:#3a1c22; --green:#62d49c; --green-soft:#132e1f; --amber:#ffb15a;
+  --mark:#5a490c; --mark-ink:#fff2c2;
+  --g0:#262b38; --g1:#24305d; --g2:#4a3015; --g3:#382553; --g4:#163d37;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  background-color:var(--paper); color:var(--ink);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-family:var(--f-body); font-size:17px; line-height:1.6;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+.wrap{max-width:52rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2.3rem,6vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,3.6vw,2.1rem);font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.2rem;font-weight:600}
+p{margin:0}
+.eyebrow{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.muted{color:var(--muted)}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* math */
+.m{font-family:var(--f-math);font-size:1.14em;white-space:normal}
+.m i,.qtext i,.step i{font-family:var(--f-math);font-style:italic}
+.r{display:inline-flex;align-items:stretch;position:relative;vertical-align:-.16em;white-space:nowrap;line-height:1}
+.r .sg{flex:none;width:.6em;background:currentColor;-webkit-mask:var(--rad-mask) no-repeat 0 0/100% 100%;mask:var(--rad-mask) no-repeat 0 0/100% 100%}
+.r .rc{border-top:.08em solid currentColor;padding:.17em .1em .03em .04em;line-height:1}
+.r3{margin-left:.2em}
+.r .ix{position:absolute;left:-.2em;top:.04em;font-size:.55em;line-height:1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero */
+.hero{padding-block:3rem 2rem}
+.hero .wrap{display:grid;gap:1rem}
+.lede{font-size:1.12rem;max-width:40rem}
+.hero-eq{margin-top:.75rem;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:1rem 1.25rem;display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;font-size:1.5rem;overflow-x:auto}
+.hero-eq .cap{font-family:var(--f-body);font-size:.85rem;color:var(--muted);flex-basis:100%}
+.hl{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:0 .15em}
+
+/* tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-block:1px solid var(--rule)}
+.tabs .wrap{display:flex;gap:.25rem;overflow-x:auto;padding-block:.4rem;scrollbar-width:none}
+.tabs a{flex:none;text-decoration:none;color:var(--ink);font-weight:700;font-size:.92rem;padding:.4rem .75rem;border-radius:999px}
+.tabs a:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* sheet */
+.sheet{background:var(--sheet);border-inline:1px solid var(--rule)}
+main.wrap{padding-block:0 3rem}
+.sec{padding-block:3rem 1rem;scroll-margin-top:3.5rem;display:grid;gap:1.5rem}
+.sec + .sec{border-top:2px dashed var(--rule)}
+.sec-head{display:grid;gap:.4rem}
+.block{display:grid;gap:.8rem}
+.block p,.block li{max-width:42rem}
+.block ul{margin:0;padding-left:1.2rem;display:grid;gap:.3rem}
+.rule-box{border:2px solid var(--accent);border-radius:10px;padding:1rem 1.2rem;background:var(--accent-soft);display:grid;gap:.4rem}
+.rule-box .m{font-size:1.35em}
+.example{border-left:4px solid var(--rule);padding:.25rem 0 .25rem 1rem;display:grid;gap:.5rem}
+.example .lbl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.steps{display:grid;gap:.45rem}
+.step{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.15rem 1.25rem;align-items:baseline}
+.step .why{color:var(--muted);font-size:.92rem}
+@media (max-width:600px){.step{grid-template-columns:minmax(0,1fr)}}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{font-family:var(--f-math);font-size:1.05rem;border:1px solid var(--rule);border-radius:6px;padding:.05rem .5rem;font-variant-numeric:tabular-nums}
+
+/* anatomy */
+.anatomy{display:flex;flex-wrap:wrap;gap:1.5rem 2.5rem;align-items:center}
+.anat-expr{font-size:4.2rem;line-height:1.2;padding-left:.2em}
+.anat-expr .p-coef{color:var(--red)}
+.anat-expr .p-ix{color:var(--green)}
+.anat-expr .p-sg{color:var(--accent)}
+.anat-expr .rc{border-top-color:var(--accent)}
+.anat-expr .p-rd{color:var(--amber)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;flex:1 1 16rem;min-width:0}
+.legend li{display:grid;grid-template-columns:.9rem 1fr;gap:.6rem;align-items:baseline}
+.sw{width:.9rem;height:.9rem;border-radius:3px;transform:translateY(.1rem)}
+
+/* tools */
+.tool{border:1px solid var(--rule);border-radius:12px;background:var(--paper);display:grid;overflow:hidden}
+.tool-head{padding:1rem 1.2rem;border-bottom:1px solid var(--rule);background:var(--sheet);display:grid;gap:.25rem}
+.tool-body{padding:1.2rem;display:grid;gap:1.1rem;min-width:0}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:flex-end}
+.fld{display:grid;gap:.2rem;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+input[type=number],input[type=text]{font:inherit;font-family:var(--f-math);font-size:1.15rem;width:6.2rem;padding:.4rem .55rem;border:1.5px solid var(--rule);border-radius:8px;background:var(--sheet);color:var(--ink);font-variant-numeric:tabular-nums}
+input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.seg{display:inline-flex;border:1.5px solid var(--rule);border-radius:999px;padding:3px;background:var(--sheet);gap:2px;flex-wrap:wrap}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label,.seg button{font:inherit;font-weight:700;font-size:.9rem;padding:.35rem .9rem;border-radius:999px;cursor:pointer;color:var(--muted);background:none;border:0}
+.seg input:checked + label,.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+.btn{font:inherit;font-weight:700;font-size:.92rem;padding:.5rem 1rem;border-radius:8px;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:var(--sheet);color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.presets{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.presets span{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:.25rem}
+.pbtn{font-family:var(--f-math);font-size:1rem;padding:.25rem .65rem;border-radius:6px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.pbtn:hover{border-color:var(--accent)}
+.out{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:1rem 1.1rem;display:grid;gap:.85rem;min-width:0;overflow-x:auto}
+.out-row{display:grid;gap:.3rem}
+.out-row .k{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.result{font-size:1.9rem;font-family:var(--f-math)}
+.grp{display:inline-flex;align-items:center;gap:.2rem;background:var(--mark);color:var(--mark-ink);border-radius:6px;padding:.05rem .5rem;font-family:var(--f-math);font-size:1.05rem}
+.grp .tag{font-family:var(--f-body);font-size:.72rem;font-weight:700;margin-left:.35rem;opacity:.85}
+.err{color:var(--red);font-weight:700}
+
+.trows{display:grid;gap:.6rem}
+.trow{display:flex;flex-wrap:wrap;gap:.5rem .75rem;align-items:flex-end}
+.trow .sym{font-size:2rem;line-height:1;padding-bottom:.3rem}
+.icon-btn{font:inherit;font-size:1.2rem;line-height:1;width:2.3rem;height:2.3rem;border-radius:8px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--muted);cursor:pointer}
+.icon-btn:hover:not(:disabled){border-color:var(--red);color:var(--red)}
+.icon-btn:disabled{opacity:.35;cursor:not-allowed}
+.slist{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.slist li{display:flex;flex-wrap:wrap;gap:.3rem .6rem;align-items:baseline}
+.arrow{color:var(--muted)}
+.gt{border-radius:6px;padding:.05rem .45rem;color:var(--ink)}
+.g0{background:var(--g0)}.g1{background:var(--g1)}.g2{background:var(--g2)}.g3{background:var(--g3)}.g4{background:var(--g4)}
+.small{font-size:.88rem;color:var(--muted)}
+.grows{display:grid;gap:.45rem}
+.grow{border-radius:8px;padding:.45rem .7rem;display:flex;flex-wrap:wrap;gap:.2rem .7rem;align-items:baseline}
+.grow .k{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+.binom{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
+.binom .paren{font-family:var(--f-math);font-size:2.4rem;line-height:1;padding-bottom:.15rem;color:var(--muted)}
+.binom .op{font-family:var(--f-math);font-size:1.4rem;padding-bottom:.45rem;color:var(--muted)}
+.tpair{display:flex;gap:.25rem;align-items:flex-end}
+.tpair input{width:4.4rem}
+.tpair .sym{font-family:var(--f-math);font-size:1.6rem;padding-bottom:.3rem}
+.gridwrap{overflow-x:auto}
+table.area{border-collapse:separate;border-spacing:4px;min-width:30rem}
+.area th,.area td{padding:.6rem .7rem;border-radius:8px;text-align:left;vertical-align:top}
+.area th{background:var(--accent-soft);color:var(--ink);font-family:var(--f-math);font-weight:400;font-size:1.15rem}
+.area th.corner{background:none;color:var(--muted);font-family:var(--f-body);font-size:.8rem;font-weight:700}
+.area td{background:var(--g0);font-family:var(--f-math);font-size:1.05rem}
+.area td .fin{display:block;font-size:1.3rem;margin-top:.2rem}
+
+/* pitfalls */
+.pits{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,21rem),1fr));gap:1rem}
+.pit{border:1px solid var(--rule);border-radius:12px;padding:1.1rem 1.2rem;display:grid;gap:.6rem;align-content:start;background:var(--sheet)}
+.pit h3{font-size:1.08rem}
+.bad,.good{display:grid;grid-template-columns:1.4rem minmax(0,1fr);gap:.4rem;align-items:baseline;border-radius:8px;padding:.4rem .6rem}
+.bad{background:var(--red-soft)}
+.good{background:var(--green-soft)}
+.bad .mk{color:var(--red);font-weight:700}
+.good .mk{color:var(--green);font-weight:700}
+.bad .m{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.pit .chk{font-size:.88rem;color:var(--muted);border-top:1px dashed var(--rule);padding-top:.5rem}
+
+/* practice */
+.qgroup{display:grid;gap:.9rem}
+.qgroup > h3{display:flex;gap:.6rem;align-items:baseline}
+.qgroup > h3 .range{font-family:var(--f-body);font-size:.85rem;color:var(--muted);font-weight:400}
+.qs{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.q{border:1px solid var(--rule);border-radius:10px;background:var(--sheet);padding:.9rem 1.1rem;display:grid;gap:.6rem;scroll-margin-top:3.5rem}
+.qhead{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.6rem;align-items:baseline}
+.qn{font-family:var(--f-display);font-weight:800;color:var(--accent);font-size:1.15rem}
+.qtext{min-width:0}
+details.sol{margin-left:2.6rem;border-top:1px dashed var(--rule);padding-top:.55rem}
+details.sol summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:.92rem;width:max-content;max-width:100%}
+details.sol[open] summary{margin-bottom:.7rem}
+.sol-body{display:grid;gap:.7rem}
+.ans{font-weight:700;background:var(--green-soft);border-radius:8px;padding:.45rem .7rem}
+.note{font-size:.93rem;color:var(--muted)}
+@media (max-width:520px){details.sol{margin-left:0}}
+
+.drill{border:2px solid var(--accent);border-radius:12px;background:var(--sheet);padding:1.2rem;display:grid;gap:1rem}
+.dq{font-size:2rem;font-family:var(--f-math);min-height:2.6rem}
+.dans{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end}
+.dans .sym{font-family:var(--f-math);font-size:2rem;line-height:1;padding-bottom:.3rem}
+.fb{border-radius:8px;padding:.55rem .8rem;font-weight:700}
+.fb.ok{background:var(--green-soft);color:var(--green)}
+.fb.mid{background:var(--mark);color:var(--mark-ink)}
+.fb.no{background:var(--red-soft);color:var(--red)}
+.fb:empty{display:none}
+
+table.key{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.key th,.key td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--rule)}
+.key th{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.key td:first-child{font-family:var(--f-display);font-weight:800;color:var(--accent);width:3rem}
+details.keybox summary{cursor:pointer;font-weight:700}
+footer{padding-block:2rem 3rem;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header class="hero" data-math>
+  <div class="wrap">
+    <p class="eyebrow">Pre-calculus 11 · Radical operations</p>
+    <h1>Working with Radicals</h1>
+    <p class="lede">How to simplify, add, subtract and multiply radicals, with tools you can play with, the mistakes that cost the most marks, and 22 practice questions with full worked solutions.</p>
+    <div class="hero-eq m" aria-label="Square root of 12 plus square root of 27 equals 2 root 3 plus 3 root 3 equals 5 root 3">
+      <span class="cap">The whole unit in one line: simplify first, then combine like radicals.</span>
+      <span>√{12} + √{27}</span><span>=</span><span><span class="hl">2√{3}</span> + <span class="hl">3√{3}</span></span><span>=</span><span><b>5√{3}</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap">
+    <a href="#learn">Learn</a><a href="#tools">Try it</a><a href="#pitfalls">Pitfalls</a><a href="#practice">Practice</a><a href="#drill">Quick drill</a><a href="#key">Answer key</a>
+  </div>
+</nav>
+
+<div class="sheet">
+<main class="wrap" data-math>
+
+<!-- ================= LEARN ================= -->
+<section class="sec" id="learn">
+  <div class="sec-head">
+    <p class="eyebrow">Part 1</p>
+    <h2>Learn the ideas</h2>
+  </div>
+
+  <div class="block">
+    <h3>Parts of a radical</h3>
+    <div class="anatomy">
+      <div class="anat-expr m" aria-label="5 times the cube root of 16"><span class="p-coef">5</span><span class="r r3"><span class="ix p-ix">3</span><span class="sg p-sg"></span><span class="rc"><span class="p-rd">16</span></span></span></div>
+      <ul class="legend">
+        <li><span class="sw" style="background:var(--red)"></span><span><b>Coefficient</b> (5): the number in front. It multiplies the radical.</span></li>
+        <li><span class="sw" style="background:var(--green)"></span><span><b>Index</b> (3): which root you take. No index written means 2, a square root.</span></li>
+        <li><span class="sw" style="background:var(--accent)"></span><span><b>Radical sign</b>: the root symbol with its bar.</span></li>
+        <li><span class="sw" style="background:var(--amber)"></span><span><b>Radicand</b> (16): the number or expression under the sign.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Entire radicals and mixed radicals</h3>
+    <p>An <b>entire radical</b> has everything under the sign, like <span class="m">√{50}</span>. A <b>mixed radical</b> has a coefficient outside, like <span class="m">5√{2}</span>. They can be equal: <span class="m">√{50} = 5√{2}</span>. Pre-calc 11 expects you to move between the two forms in both directions.</p>
+    <div class="example">
+      <p class="lbl">Mixed → entire: raise the coefficient to the index, then move it inside</p>
+      <div class="steps">
+        <div class="step"><span class="m">5√{2} = √{5² · 2} = √{25 · 2} = √{50}</span><span class="why">square the 5 because the index is 2</span></div>
+        <div class="step"><span class="m">2∛{3} = ∛{2³ · 3} = ∛{24}</span><span class="why">cube the 2 because the index is 3</span></div>
+      </div>
+    </div>
+    <div class="example">
+      <p class="lbl">Entire → mixed: pull out the largest perfect square (or cube) factor</p>
+      <div class="steps">
+        <div class="step"><span class="m">√{50} = √{25 · 2} = √{25} · √{2} = 5√{2}</span><span class="why">25 is a perfect square that divides 50</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>The rule that makes it all work</h3>
+    <div class="rule-box">
+      <p><b>Product property of radicals</b></p>
+      <p class="m">√{<i>a</i>} · √{<i>b</i>} = √{<i>ab</i>}  &nbsp; (<i>a</i>, <i>b</i> ≥ 0)</p>
+      <p class="m">∛{<i>a</i>} · ∛{<i>b</i>} = ∛{<i>ab</i>}  &nbsp; (any real <i>a</i>, <i>b</i>)</p>
+      <p class="small">It works for multiplication (and division). It does <b>not</b> work for addition: <span class="m">√{<i>a</i> + <i>b</i>} ≠ √{<i>a</i>} + √{<i>b</i>}</span>.</p>
+    </div>
+    <p>Read left to right, it multiplies radicals. Read right to left, it splits a radical so you can simplify it. Keep these lists handy:</p>
+    <div class="out-row"><span class="small"><b>Perfect squares</b></span><div class="chips"><span class="chip">4</span><span class="chip">9</span><span class="chip">16</span><span class="chip">25</span><span class="chip">36</span><span class="chip">49</span><span class="chip">64</span><span class="chip">81</span><span class="chip">100</span><span class="chip">121</span><span class="chip">144</span><span class="chip">169</span><span class="chip">196</span><span class="chip">225</span></div></div>
+    <div class="out-row"><span class="small"><b>Perfect cubes</b></span><div class="chips"><span class="chip">8</span><span class="chip">27</span><span class="chip">64</span><span class="chip">125</span><span class="chip">216</span><span class="chip">343</span><span class="chip">512</span><span class="chip">729</span><span class="chip">1000</span></div></div>
+  </div>
+
+  <div class="block">
+    <h3>Simplifying a radical</h3>
+    <p>A radical is in <b>simplest form</b> when the radicand has no perfect-square factor other than 1 (no perfect-cube factor for a cube root). There are two reliable methods.</p>
+    <div class="example">
+      <p class="lbl">Method 1: largest perfect square</p>
+      <div class="steps">
+        <div class="step"><span class="m">√{180} = √{36 · 5}</span><span class="why">36 is the largest perfect square that divides 180</span></div>
+        <div class="step"><span class="m">= √{36} · √{5} = 6√{5}</span><span class="why">product property, then take the root of 36</span></div>
+      </div>
+    </div>
+    <div class="example">
+      <p class="lbl">Method 2: prime factors in pairs</p>
+      <div class="steps">
+        <div class="step"><span class="m">180 = <span class="hl">2 · 2</span> · <span class="hl">3 · 3</span> · 5</span><span class="why">break into primes</span></div>
+        <div class="step"><span class="m">√{180} = 2 · 3 · √{5} = 6√{5}</span><span class="why">each pair leaves as one factor; the single 5 stays inside</span></div>
+      </div>
+      <p class="small">For a cube root, look for groups of three: <span class="m">∛{250} = ∛{5 · 5 · 5 · 2} = 5∛{2}</span>.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Adding and subtracting</h3>
+    <p><b>Like radicals</b> have the same index <b>and</b> the same radicand. You combine them the way you combine like terms in algebra: add or subtract the coefficients and keep the radical unchanged. <span class="m">3<i>x</i> + 5<i>x</i> = 8<i>x</i></span>, so <span class="m">3√{2} + 5√{2} = 8√{2}</span>.</p>
+    <p>Radicals that look unlike may become like once simplified, so always <b>simplify first</b>, then <b>group</b>, then <b>combine</b>.</p>
+    <div class="example">
+      <p class="lbl">Example</p>
+      <div class="steps">
+        <div class="step"><span class="m">√{50} + √{32} − √{2}</span><span class="why">none of these look alike yet</span></div>
+        <div class="step"><span class="m">= 5√{2} + 4√{2} − 1√{2}</span><span class="why">simplify each; √2 has a hidden coefficient of 1</span></div>
+        <div class="step"><span class="m">= (5 + 4 − 1)√{2} = 8√{2}</span><span class="why">combine coefficients</span></div>
+      </div>
+    </div>
+    <div class="example">
+      <p class="lbl">Example with leftovers</p>
+      <div class="steps">
+        <div class="step"><span class="m">2√{12} + √{27} − √{8}</span><span class="why"></span></div>
+        <div class="step"><span class="m">= 2(2√{3}) + 3√{3} − 2√{2}</span><span class="why">simplify each radical</span></div>
+        <div class="step"><span class="m">= 4√{3} + 3√{3} − 2√{2} = 7√{3} − 2√{2}</span><span class="why">√3 terms combine; the √2 term cannot</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Multiplying</h3>
+    <p>When the index matches, multiply <b>coefficient by coefficient</b> and <b>radicand by radicand</b>, then simplify. You do not need like radicals to multiply. One fact comes up constantly: <span class="m">√{<i>a</i>} · √{<i>a</i>} = <i>a</i></span>.</p>
+    <div class="example">
+      <p class="lbl">Monomial × monomial</p>
+      <div class="steps">
+        <div class="step"><span class="m">(2√{6})(5√{15}) = 10√{90}</span><span class="why">2 · 5 = 10 and 6 · 15 = 90</span></div>
+        <div class="step"><span class="m">= 10 · 3√{10} = 30√{10}</span><span class="why">√90 = √(9 · 10) = 3√10</span></div>
+      </div>
+      <p class="small">Cube roots work the same way: <span class="m">∛{9} · ∛{6} = ∛{54} = ∛{27 · 2} = 3∛{2}</span>.</p>
+    </div>
+    <div class="example">
+      <p class="lbl">Distributive property</p>
+      <div class="steps">
+        <div class="step"><span class="m">2√{3}(4 − √{6}) = 8√{3} − 2√{18}</span><span class="why">multiply 2√3 by each term</span></div>
+        <div class="step"><span class="m">= 8√{3} − 6√{2}</span><span class="why">√18 = 3√2, so 2√18 = 6√2</span></div>
+      </div>
+    </div>
+    <div class="example">
+      <p class="lbl">Binomial × binomial (FOIL)</p>
+      <div class="steps">
+        <div class="step"><span class="m">(√{6} + 2)(3√{6} − 1)</span><span class="why"></span></div>
+        <div class="step"><span class="m">= 3·6 − √{6} + 6√{6} − 2</span><span class="why">First, Outer, Inner, Last</span></div>
+        <div class="step"><span class="m">= 16 + 5√{6}</span><span class="why">whole numbers together, √6 terms together</span></div>
+      </div>
+    </div>
+    <div class="example">
+      <p class="lbl">Two special products</p>
+      <div class="steps">
+        <div class="step"><span class="m">(2√{3} + 1)(2√{3} − 1) = (2√{3})² − 1² = 12 − 1 = 11</span><span class="why"><b>conjugates</b>: the middle terms cancel and no radical is left</span></div>
+        <div class="step"><span class="m">(√{2} + 3)² = 2 + 2(3√{2}) + 9 = 11 + 6√{2}</span><span class="why"><b>square of a binomial</b>: <i>a</i>² + 2<i>ab</i> + <i>b</i>², never forget 2<i>ab</i></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Variables and restrictions</h3>
+    <p>A square root (any even index) needs a radicand that is <b>not negative</b>, so you state a restriction on the variable. A cube root accepts any real number: <span class="m">∛{−8} = −2</span>.</p>
+    <ul>
+      <li><span class="m">√{<i>x</i> − 3}</span> is defined only when <span class="m"><i>x</i> − 3 ≥ 0</span>, so the restriction is <span class="m"><i>x</i> ≥ 3</span>.</li>
+      <li>Pair up variable factors the same way as number factors: <span class="m"><i>x</i>³ = <i>x</i>² · <i>x</i></span>.</li>
+      <li>In general <span class="m">√{<i>x</i>²} = |<i>x</i>|</span>. When the question gives <span class="m"><i>x</i> ≥ 0</span>, you can write <span class="m">√{<i>x</i>²} = <i>x</i></span>.</li>
+    </ul>
+    <div class="example">
+      <p class="lbl">Example, <i>x</i> ≥ 0</p>
+      <div class="steps">
+        <div class="step"><span class="m">√{50<i>x</i>³} = √{25<i>x</i>² · 2<i>x</i>}</span><span class="why">25 and <i>x</i>² are perfect squares</span></div>
+        <div class="step"><span class="m">= 5<i>x</i>√{2<i>x</i>}</span><span class="why">take them out; 2<i>x</i> stays inside</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOOLS ================= -->
+<section class="sec" id="tools">
+  <div class="sec-head">
+    <p class="eyebrow">Part 2</p>
+    <h2>Try it yourself</h2>
+    <p class="muted">Change any number and every step updates. Use these to check your own work, or to see why a method works.</p>
+  </div>
+
+  <div class="tool">
+    <div class="tool-head">
+      <h3>Radical simplifier</h3>
+      <p class="small">Shows the prime factors, which groups come out, and both mixed and entire forms.</p>
+    </div>
+    <div class="tool-body">
+      <div class="controls">
+        <div class="fld"><span>Root</span>
+          <div class="seg" role="radiogroup" aria-label="Root">
+            <input type="radio" name="s-idx" id="s-idx2" checked><label for="s-idx2">Square √</label>
+            <input type="radio" name="s-idx" id="s-idx3"><label for="s-idx3">Cube ∛</label>
+          </div>
+        </div>
+        <label class="fld"><span>Coefficient</span><input id="s-k" type="number" step="1" value="1"></label>
+        <label class="fld"><span>Radicand</span><input id="s-n" type="number" min="1" step="1" value="72"></label>
+      </div>
+      <div class="presets"><span>Try</span>
+        <button class="pbtn" data-sp="2,1,72">√72</button>
+        <button class="pbtn" data-sp="2,3,48">3√48</button>
+        <button class="pbtn" data-sp="2,1,360">√360</button>
+        <button class="pbtn" data-sp="3,1,54">∛54</button>
+        <button class="pbtn" data-sp="3,2,128">2∛128</button>
+      </div>
+      <div class="out" id="s-out" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="tool">
+    <div class="tool-head">
+      <h3>Like-radical combiner</h3>
+      <p class="small">Enter up to six terms. Each one is simplified, then colour-matched with its like radicals and combined.</p>
+    </div>
+    <div class="tool-body">
+      <div class="controls">
+        <div class="fld"><span>Root</span>
+          <div class="seg" role="radiogroup" aria-label="Root for combiner">
+            <input type="radio" name="c-idx" id="c-idx2" checked><label for="c-idx2">Square √</label>
+            <input type="radio" name="c-idx" id="c-idx3"><label for="c-idx3">Cube ∛</label>
+          </div>
+        </div>
+      </div>
+      <div class="trows" id="c-rows"></div>
+      <div class="btns"><button class="btn ghost" id="c-add">Add a term</button></div>
+      <div class="presets"><span>Try</span>
+        <button class="pbtn" data-cp="2|1,20|1,45">√20 + √45</button>
+        <button class="pbtn" data-cp="2|3,8|-1,32|1,27">3√8 − √32 + √27</button>
+        <button class="pbtn" data-cp="2|1,50|1,18|-1,98">√50 + √18 − √98</button>
+        <button class="pbtn" data-cp="3|1,24|1,81">∛24 + ∛81</button>
+      </div>
+      <div class="out" id="c-out" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="tool">
+    <div class="tool-head">
+      <h3>Binomial multiplier</h3>
+      <p class="small">Each term is a coefficient times a square root. Use radicand 1 for a plain number. The grid shows all four products (FOIL), then like terms are collected.</p>
+    </div>
+    <div class="tool-body">
+      <div class="binom" id="m-in">
+        <span class="paren">(</span>
+        <div class="tpair"><label class="fld"><span>Coef</span><input id="m-a1" type="number" step="1"></label><span class="sym">√</span><label class="fld"><span>Rad</span><input id="m-b1" type="number" min="1" step="1"></label></div>
+        <span class="op">+</span>
+        <div class="tpair"><label class="fld"><span>Coef</span><input id="m-a2" type="number" step="1"></label><span class="sym">√</span><label class="fld"><span>Rad</span><input id="m-b2" type="number" min="1" step="1"></label></div>
+        <span class="paren">)(</span>
+        <div class="tpair"><label class="fld"><span>Coef</span><input id="m-c1" type="number" step="1"></label><span class="sym">√</span><label class="fld"><span>Rad</span><input id="m-d1" type="number" min="1" step="1"></label></div>
+        <span class="op">+</span>
+        <div class="tpair"><label class="fld"><span>Coef</span><input id="m-c2" type="number" step="1"></label><span class="sym">√</span><label class="fld"><span>Rad</span><input id="m-d2" type="number" min="1" step="1"></label></div>
+        <span class="paren">)</span>
+      </div>
+      <div class="presets"><span>Try</span>
+        <button class="pbtn" data-mp="2,3,1,1,1,3,-5,1">(2√3 + 1)(√3 − 5)</button>
+        <button class="pbtn" data-mp="1,6,2,1,1,6,-2,1">Conjugates (√6 + 2)(√6 − 2)</button>
+        <button class="pbtn" data-mp="1,5,1,3,1,5,1,3">Square (√5 + √3)²</button>
+        <button class="pbtn" data-mp="4,2,-1,6,1,2,3,3">(4√2 − √6)(√2 + 3√3)</button>
+      </div>
+      <div class="out" id="m-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PITFALLS ================= -->
+<section class="sec" id="pitfalls">
+  <div class="sec-head">
+    <p class="eyebrow">Part 3</p>
+    <h2>Common pitfalls</h2>
+    <p class="muted">Each card shows the mistake, the fix, and a calculator check you can use to catch it yourself.</p>
+  </div>
+  <div class="pits">
+    <article class="pit">
+      <h3>Splitting a sum under the root</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{9 + 16} = 3 + 4 = 7</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{9 + 16} = √{25} = 5</span></div>
+      <p>The product property splits <b>products</b>, never sums. Work out what is under the sign first.</p>
+      <p class="chk">Check: 5 ≠ 7, so the shortcut fails.</p>
+    </article>
+    <article class="pit">
+      <h3>Adding unlike radicals</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{2} + √{3} = √{5}</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{2} + √{3}</span> is already as simple as it gets</div>
+      <p>Different radicands are like <i>x</i> and <i>y</i>. You can't combine <i>x</i> + <i>y</i>, and you can't combine these.</p>
+      <p class="chk">Check: 1.414 + 1.732 = 3.146, but √5 ≈ 2.236.</p>
+    </article>
+    <article class="pit">
+      <h3>Adding the radicands too</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">3√{2} + 4√{2} = 7√{4}</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">3√{2} + 4√{2} = 7√{2}</span></div>
+      <p>Only the coefficients change. The radical is the "unit" being counted, just like 3<i>x</i> + 4<i>x</i> = 7<i>x</i>, not 7<i>x</i>².</p>
+      <p class="chk">Check: 7√2 ≈ 9.899, but 7√4 = 14.</p>
+    </article>
+    <article class="pit">
+      <h3>Giving up before simplifying</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{8} + √{18}</span> "can't be combined"</div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{8} + √{18} = 2√{2} + 3√{2} = 5√{2}</span></div>
+      <p>Radicals that look different often share a radicand once simplified. Simplify every term before you decide.</p>
+      <p class="chk">Check: 2.828 + 4.243 = 7.071 and 5√2 ≈ 7.071.</p>
+    </article>
+    <article class="pit">
+      <h3>Stopping halfway</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{72} = 2√{18}</span> (final answer)</div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{72} = √{36 · 2} = 6√{2}</span></div>
+      <p>18 still contains the perfect square 9. Use the <b>largest</b> perfect square, or look at your answer's radicand and check it for square factors.</p>
+      <p class="chk">Check: both equal 8.485, but only 6√2 is simplest form.</p>
+    </article>
+    <article class="pit">
+      <h3>Moving a coefficient in without squaring it</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">3√{2} = √{6}</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">3√{2} = √{9 · 2} = √{18}</span></div>
+      <p>A number moving under a square root gets squared (cubed for a cube root), because 3 = √9.</p>
+      <p class="chk">Check: 3√2 ≈ 4.243, √6 ≈ 2.449, √18 ≈ 4.243.</p>
+    </article>
+    <article class="pit">
+      <h3>Multiplying a coefficient into the radicand</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">2√{3} · 5 = 2√{15}</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">2√{3} · 5 = 10√{3}</span></div>
+      <p>Outside numbers multiply outside numbers. Inside numbers multiply inside numbers.</p>
+      <p class="chk">Check: 2√3 · 5 ≈ 17.32, 2√15 ≈ 7.746.</p>
+    </article>
+    <article class="pit">
+      <h3>Squaring a root and getting the wrong number</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{3} · √{3} = 9</span>  or  <span class="m">√{3} · √{3} = √{3}</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{3} · √{3} = √{9} = 3</span></div>
+      <p>Squaring a square root undoes it. Likewise <span class="m">(2√{5})² = 4 · 5 = 20</span>: square the coefficient <b>and</b> the radical.</p>
+      <p class="chk">Check: 1.732 × 1.732 ≈ 3.</p>
+    </article>
+    <article class="pit">
+      <h3>Dropping the middle term when squaring</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">(√{5} + 2)² = 5 + 4 = 9</span></div>
+      <div class="good"><span class="mk">✓</span><span class="m">(√{5} + 2)² = 5 + 4√{5} + 4 = 9 + 4√{5}</span></div>
+      <p><span class="m">(<i>a</i> + <i>b</i>)² = <i>a</i>² + 2<i>ab</i> + <i>b</i>²</span>. Writing it out as <span class="m">(√{5} + 2)(√{5} + 2)</span> and using FOIL prevents this.</p>
+      <p class="chk">Check: 4.236² ≈ 17.944 and 9 + 4√5 ≈ 17.944.</p>
+    </article>
+    <article class="pit">
+      <h3>Mixing different indices</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{2} · ∛{2} = √{4}</span>  or  <span class="m">∛{2} + √{2} = 2√{2}</span></div>
+      <div class="good"><span class="mk">✓</span> Leave as <span class="m">√{2} · ∛{2}</span> and <span class="m">∛{2} + √{2}</span></div>
+      <p>The product property and the like-radical rule both need the <b>same index</b>. A square root and a cube root are never like radicals.</p>
+      <p class="chk">Check: √2 · ∛2 ≈ 1.414 × 1.260 = 1.782, but √4 = 2.</p>
+    </article>
+    <article class="pit">
+      <h3>Forgetting restrictions on variables</h3>
+      <div class="bad"><span class="mk">✗</span><span class="m">√{<i>x</i>²} = <i>x</i></span> for every <i>x</i></div>
+      <div class="good"><span class="mk">✓</span><span class="m">√{<i>x</i>²} = |<i>x</i>|</span>, which equals <i>x</i> only when <span class="m"><i>x</i> ≥ 0</span></div>
+      <p>For square roots, state the values that keep the radicand ≥ 0. Cube roots have no such restriction.</p>
+      <p class="chk">Check with <i>x</i> = −4: √((−4)²) = √16 = 4, not −4.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= PRACTICE ================= -->
+<section class="sec" id="practice">
+  <div class="sec-head">
+    <p class="eyebrow">Part 4</p>
+    <h2>Practice questions</h2>
+    <p class="muted">Work each one on paper first, then open the solution. Every solution shows each step and the reason for it.</p>
+    <div class="btns"><button class="btn ghost" id="open-all">Open all solutions</button></div>
+  </div>
+
+  <div class="qgroup">
+    <h3>A · Simplifying <span class="range">Questions 1–5</span></h3>
+    <ol class="qs">
+      <li class="q" id="q1"><div class="qhead"><span class="qn">1</span><div class="qtext">Simplify <span class="m">√{72}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">√{72} = √{36 · 2}</span><span class="why">36 is the largest perfect square that divides 72</span></div>
+          <div class="step"><span class="m">= √{36} · √{2}</span><span class="why">product property</span></div>
+          <div class="step"><span class="m">= 6√{2}</span><span class="why">√36 = 6</span></div></div>
+          <p class="ans">Answer: <span class="m">6√{2}</span></p>
+          <p class="note">If you used 4 first you get <span class="m">2√{18}</span>, which still contains 9. Keep going: <span class="m">2 · 3√{2} = 6√{2}</span>. Same answer, one extra step.</p></div></details></li>
+
+      <li class="q" id="q2"><div class="qhead"><span class="qn">2</span><div class="qtext">Simplify <span class="m">3√{50}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">√{50} = √{25 · 2} = 5√{2}</span><span class="why">simplify the radical first</span></div>
+          <div class="step"><span class="m">3√{50} = 3 · 5√{2} = 15√{2}</span><span class="why">multiply by the coefficient already outside</span></div></div>
+          <p class="ans">Answer: <span class="m">15√{2}</span></p>
+          <p class="note">The coefficient 3 waits outside the whole time. It multiplies whatever comes out of the radical.</p></div></details></li>
+
+      <li class="q" id="q3"><div class="qhead"><span class="qn">3</span><div class="qtext">Simplify <span class="m">∛{54}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">∛{54} = ∛{27 · 2}</span><span class="why">look for a perfect <b>cube</b>: 8, 27, 64 … and 27 divides 54</span></div>
+          <div class="step"><span class="m">= ∛{27} · ∛{2} = 3∛{2}</span><span class="why">∛27 = 3</span></div></div>
+          <p class="ans">Answer: <span class="m">3∛{2}</span></p>
+          <p class="note">A common slip is pulling out 9 because it is a perfect square. For a cube root, 9 does not help; you need groups of three equal factors (54 = 3 · 3 · 3 · 2).</p></div></details></li>
+
+      <li class="q" id="q4"><div class="qhead"><span class="qn">4</span><div class="qtext">Write <span class="m">4√{3}</span> as an entire radical.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">4 = √{16}</span><span class="why">write the coefficient as a square root by squaring it</span></div>
+          <div class="step"><span class="m">4√{3} = √{16} · √{3} = √{48}</span><span class="why">product property</span></div></div>
+          <p class="ans">Answer: <span class="m">√{48}</span></p>
+          <p class="note">Check: 4√3 ≈ 4 × 1.732 = 6.928 and √48 ≈ 6.928. Writing √12 (4 × 3) is the classic error.</p></div></details></li>
+
+      <li class="q" id="q5"><div class="qhead"><span class="qn">5</span><div class="qtext">Simplify <span class="m">√{48<i>x</i><sup>3</sup>}</span>, where <span class="m"><i>x</i> ≥ 0</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">48<i>x</i><sup>3</sup> = 16 · 3 · <i>x</i><sup>2</sup> · <i>x</i></span><span class="why">split numbers and variables into perfect squares and leftovers</span></div>
+          <div class="step"><span class="m">√{16<i>x</i><sup>2</sup>} · √{3<i>x</i>}</span><span class="why">group the perfect squares together</span></div>
+          <div class="step"><span class="m">= 4<i>x</i>√{3<i>x</i>}</span><span class="why">√16 = 4 and √(<i>x</i>²) = <i>x</i> because <i>x</i> ≥ 0</span></div></div>
+          <p class="ans">Answer: <span class="m">4<i>x</i>√{3<i>x</i>}</span></p>
+          <p class="note">The restriction <i>x</i> ≥ 0 is what lets you write <i>x</i> instead of |<i>x</i>|.</p></div></details></li>
+    </ol>
+  </div>
+
+  <div class="qgroup">
+    <h3>B · Adding and subtracting <span class="range">Questions 6–11</span></h3>
+    <ol class="qs">
+      <li class="q" id="q6"><div class="qhead"><span class="qn">6</span><div class="qtext">Simplify <span class="m">5√{7} − 2√{7} + √{7}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">5√{7} − 2√{7} + 1√{7}</span><span class="why">all like radicals; √7 has a coefficient of 1</span></div>
+          <div class="step"><span class="m">= (5 − 2 + 1)√{7} = 4√{7}</span><span class="why">combine coefficients only</span></div></div>
+          <p class="ans">Answer: <span class="m">4√{7}</span></p>
+          <p class="note">Forgetting the invisible 1 gives 3√7. Forgetting that radicands stay the same gives √21.</p></div></details></li>
+
+      <li class="q" id="q7"><div class="qhead"><span class="qn">7</span><div class="qtext">Simplify <span class="m">√{12} + √{75}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">√{12} = √{4 · 3} = 2√{3}</span><span class="why">simplify each term</span></div>
+          <div class="step"><span class="m">√{75} = √{25 · 3} = 5√{3}</span><span class="why"></span></div>
+          <div class="step"><span class="m">2√{3} + 5√{3} = 7√{3}</span><span class="why">now they are like radicals</span></div></div>
+          <p class="ans">Answer: <span class="m">7√{3}</span></p>
+          <p class="note">√87 is wrong: you can't add radicands.</p></div></details></li>
+
+      <li class="q" id="q8"><div class="qhead"><span class="qn">8</span><div class="qtext">Simplify <span class="m">2√{18} − √{50} + √{8}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">2√{18} = 2 · 3√{2} = 6√{2}</span><span class="why">√18 = √(9 · 2)</span></div>
+          <div class="step"><span class="m">√{50} = 5√{2}</span><span class="why">√(25 · 2)</span></div>
+          <div class="step"><span class="m">√{8} = 2√{2}</span><span class="why">√(4 · 2)</span></div>
+          <div class="step"><span class="m">6√{2} − 5√{2} + 2√{2} = 3√{2}</span><span class="why">6 − 5 + 2 = 3</span></div></div>
+          <p class="ans">Answer: <span class="m">3√{2}</span></p>
+          <p class="note">Keep the minus sign attached to √50 throughout: it becomes −5√2.</p></div></details></li>
+
+      <li class="q" id="q9"><div class="qhead"><span class="qn">9</span><div class="qtext">Simplify <span class="m">√{45} − √{20} + √{12}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">√{45} = 3√{5}, √{20} = 2√{5}, √{12} = 2√{3}</span><span class="why">simplify each term</span></div>
+          <div class="step"><span class="m">3√{5} − 2√{5} + 2√{3}</span><span class="why">two like radicals and one that is different</span></div>
+          <div class="step"><span class="m">= √{5} + 2√{3}</span><span class="why">3 − 2 = 1, and 1√5 is written √5</span></div></div>
+          <p class="ans">Answer: <span class="m">√{5} + 2√{3}</span></p>
+          <p class="note">This is the final answer. √5 and √3 are not like radicals, so the expression stops here.</p></div></details></li>
+
+      <li class="q" id="q10"><div class="qhead"><span class="qn">10</span><div class="qtext">Simplify <span class="m">2∛{16} + ∛{54} − ∛{2}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">∛{16} = ∛{8 · 2} = 2∛{2}</span><span class="why">8 is a perfect cube</span></div>
+          <div class="step"><span class="m">2∛{16} = 4∛{2}</span><span class="why">multiply by the coefficient 2</span></div>
+          <div class="step"><span class="m">∛{54} = ∛{27 · 2} = 3∛{2}</span><span class="why">27 is a perfect cube</span></div>
+          <div class="step"><span class="m">4∛{2} + 3∛{2} − ∛{2} = 6∛{2}</span><span class="why">4 + 3 − 1 = 6</span></div></div>
+          <p class="ans">Answer: <span class="m">6∛{2}</span></p></div></details></li>
+
+      <li class="q" id="q11"><div class="qhead"><span class="qn">11</span><div class="qtext">Simplify <span class="m">√{27<i>x</i>} + √{12<i>x</i>} − √{3<i>x</i>}</span>, where <span class="m"><i>x</i> ≥ 0</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">√{27<i>x</i>} = √{9 · 3<i>x</i>} = 3√{3<i>x</i>}</span><span class="why">pull out 9</span></div>
+          <div class="step"><span class="m">√{12<i>x</i>} = √{4 · 3<i>x</i>} = 2√{3<i>x</i>}</span><span class="why">pull out 4</span></div>
+          <div class="step"><span class="m">3√{3<i>x</i>} + 2√{3<i>x</i>} − √{3<i>x</i>} = 4√{3<i>x</i>}</span><span class="why">all three share the radicand 3<i>x</i></span></div></div>
+          <p class="ans">Answer: <span class="m">4√{3<i>x</i>}</span></p>
+          <p class="note">Variables inside the radicand must match too. √(3<i>x</i>) and √3 are not like radicals.</p></div></details></li>
+    </ol>
+  </div>
+
+  <div class="qgroup">
+    <h3>C · Multiplying and expanding <span class="range">Questions 12–18</span></h3>
+    <ol class="qs">
+      <li class="q" id="q12"><div class="qhead"><span class="qn">12</span><div class="qtext">Simplify <span class="m">(3√{6})(2√{10})</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">= (3 · 2)√{6 · 10} = 6√{60}</span><span class="why">coefficients together, radicands together</span></div>
+          <div class="step"><span class="m">√{60} = √{4 · 15} = 2√{15}</span><span class="why">simplify the product</span></div>
+          <div class="step"><span class="m">6 · 2√{15} = 12√{15}</span><span class="why"></span></div></div>
+          <p class="ans">Answer: <span class="m">12√{15}</span></p>
+          <p class="note">Tip: factor before multiplying. 6 · 10 = (2 · 3)(2 · 5) shows the pair of 2s right away.</p></div></details></li>
+
+      <li class="q" id="q13"><div class="qhead"><span class="qn">13</span><div class="qtext">Expand and simplify <span class="m">√{3}(√{6} − 2√{3})</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">= √{3} · √{6} − √{3} · 2√{3}</span><span class="why">distribute √3 to both terms</span></div>
+          <div class="step"><span class="m">= √{18} − 2 · 3</span><span class="why">√3 · √3 = 3</span></div>
+          <div class="step"><span class="m">= 3√{2} − 6</span><span class="why">√18 = √(9 · 2) = 3√2</span></div></div>
+          <p class="ans">Answer: <span class="m">3√{2} − 6</span></p>
+          <p class="note">These two terms are unlike (one has a radical, one doesn't), so you stop. Writing −6 + 3√2 is equally correct.</p></div></details></li>
+
+      <li class="q" id="q14"><div class="qhead"><span class="qn">14</span><div class="qtext">Expand and simplify <span class="m">(2√{5} + 3)(√{5} − 4)</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">F: 2√{5} · √{5} = 2 · 5 = 10</span><span class="why">first terms</span></div>
+          <div class="step"><span class="m">O: 2√{5} · (−4) = −8√{5}</span><span class="why">outer terms</span></div>
+          <div class="step"><span class="m">I: 3 · √{5} = 3√{5}</span><span class="why">inner terms</span></div>
+          <div class="step"><span class="m">L: 3 · (−4) = −12</span><span class="why">last terms</span></div>
+          <div class="step"><span class="m">10 − 12 + (−8 + 3)√{5} = −2 − 5√{5}</span><span class="why">collect whole numbers and √5 terms</span></div></div>
+          <p class="ans">Answer: <span class="m">−2 − 5√{5}</span></p>
+          <p class="note">Paste these numbers into the binomial multiplier above to see the same four products in a grid.</p></div></details></li>
+
+      <li class="q" id="q15"><div class="qhead"><span class="qn">15</span><div class="qtext">Expand and simplify <span class="m">(√{7} + √{2})(√{7} − √{2})</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">= 7 − √{14} + √{14} − 2</span><span class="why">FOIL</span></div>
+          <div class="step"><span class="m">= 5</span><span class="why">the middle terms cancel</span></div></div>
+          <p class="ans">Answer: <span class="m">5</span></p>
+          <p class="note">These are <b>conjugates</b>: same terms, opposite sign in the middle. They always follow (<i>a</i> + <i>b</i>)(<i>a</i> − <i>b</i>) = <i>a</i>² − <i>b</i>², so the radicals disappear. You'll use this to rationalize denominators.</p></div></details></li>
+
+      <li class="q" id="q16"><div class="qhead"><span class="qn">16</span><div class="qtext">Expand and simplify <span class="m">(3√{2} − √{5})²</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">(<i>a</i> − <i>b</i>)² = <i>a</i>² − 2<i>ab</i> + <i>b</i>²</span><span class="why">with <i>a</i> = 3√2 and <i>b</i> = √5</span></div>
+          <div class="step"><span class="m"><i>a</i>² = (3√{2})² = 9 · 2 = 18</span><span class="why">square the coefficient and the radical</span></div>
+          <div class="step"><span class="m">2<i>ab</i> = 2 · 3√{2} · √{5} = 6√{10}</span><span class="why">middle term</span></div>
+          <div class="step"><span class="m"><i>b</i>² = (√{5})² = 5</span><span class="why"></span></div>
+          <div class="step"><span class="m">18 − 6√{10} + 5 = 23 − 6√{10}</span><span class="why">combine 18 and 5</span></div></div>
+          <p class="ans">Answer: <span class="m">23 − 6√{10}</span></p>
+          <p class="note">Answering 23 (or 18 − 5 = 13) means the middle term was dropped. See the pitfall card above.</p></div></details></li>
+
+      <li class="q" id="q17"><div class="qhead"><span class="qn">17</span><div class="qtext">Simplify <span class="m">∛{4} · ∛{6}</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">= ∛{24}</span><span class="why">same index, so multiply the radicands</span></div>
+          <div class="step"><span class="m">= ∛{8 · 3} = 2∛{3}</span><span class="why">8 is a perfect cube</span></div></div>
+          <p class="ans">Answer: <span class="m">2∛{3}</span></p>
+          <p class="note">√24 would simplify to 2√6, but this is a cube root, so you need the cube factor 8, not the square factor 4.</p></div></details></li>
+
+      <li class="q" id="q18"><div class="qhead"><span class="qn">18</span><div class="qtext">Expand and simplify <span class="m">(2√{<i>x</i>} + 3)(√{<i>x</i>} − 1)</span>, where <span class="m"><i>x</i> ≥ 0</span>.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">F: 2√{<i>x</i>} · √{<i>x</i>} = 2<i>x</i></span><span class="why">√<i>x</i> · √<i>x</i> = <i>x</i></span></div>
+          <div class="step"><span class="m">O: −2√{<i>x</i>}, &nbsp; I: 3√{<i>x</i>}, &nbsp; L: −3</span><span class="why"></span></div>
+          <div class="step"><span class="m">2<i>x</i> + (−2 + 3)√{<i>x</i>} − 3 = 2<i>x</i> + √{<i>x</i>} − 3</span><span class="why">combine the √<i>x</i> terms</span></div></div>
+          <p class="ans">Answer: <span class="m">2<i>x</i> + √{<i>x</i>} − 3</span></p></div></details></li>
+    </ol>
+  </div>
+
+  <div class="qgroup">
+    <h3>D · Apply and explain <span class="range">Questions 19–22</span></h3>
+    <ol class="qs">
+      <li class="q" id="q19"><div class="qhead"><span class="qn">19</span><div class="qtext">Which is greater, <span class="m">3√{5}</span> or <span class="m">2√{11}</span>? Do not use a calculator.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">3√{5} = √{9 · 5} = √{45}</span><span class="why">convert to an entire radical</span></div>
+          <div class="step"><span class="m">2√{11} = √{4 · 11} = √{44}</span><span class="why">same for the other</span></div>
+          <div class="step"><span class="m">√{45} > √{44}</span><span class="why">a bigger radicand gives a bigger square root</span></div></div>
+          <p class="ans">Answer: <span class="m">3√{5}</span> is greater.</p>
+          <p class="note">Entire radicals make comparing easy. This is the main reason to know the mixed → entire direction.</p></div></details></li>
+
+      <li class="q" id="q20"><div class="qhead"><span class="qn">20</span><div class="qtext">A rectangle has length <span class="m">3√{8} + √{2}</span> cm and width <span class="m">√{18}</span> cm. Find its perimeter and area in simplest form.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">Length = 3 · 2√{2} + √{2} = 7√{2}</span><span class="why">√8 = 2√2</span></div>
+          <div class="step"><span class="m">Width = √{18} = 3√{2}</span><span class="why">√(9 · 2)</span></div>
+          <div class="step"><span class="m"><i>P</i> = 2(7√{2} + 3√{2}) = 2(10√{2}) = 20√{2}</span><span class="why">perimeter = 2(length + width)</span></div>
+          <div class="step"><span class="m"><i>A</i> = 7√{2} · 3√{2} = 21 · 2 = 42</span><span class="why">√2 · √2 = 2</span></div></div>
+          <p class="ans">Answer: perimeter <span class="m">20√{2}</span> cm, area <span class="m">42</span> cm²</p></div></details></li>
+
+      <li class="q" id="q21"><div class="qhead"><span class="qn">21</span><div class="qtext">Jordan simplified <span class="m">(√{3} + 2)²</span> and wrote <span class="m">3 + 4 = 7</span>. Explain the error and give the correct answer.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">(√{3} + 2)² = (√{3} + 2)(√{3} + 2)</span><span class="why">a square means the binomial times itself</span></div>
+          <div class="step"><span class="m">= 3 + 2√{3} + 2√{3} + 4</span><span class="why">FOIL gives two middle terms</span></div>
+          <div class="step"><span class="m">= 7 + 4√{3}</span><span class="why">combine</span></div></div>
+          <p class="ans">Answer: <span class="m">7 + 4√{3}</span>. Jordan squared each term separately and lost the middle term 2<i>ab</i> = 4√3.</p></div></details></li>
+
+      <li class="q" id="q22"><div class="qhead"><span class="qn">22</span><div class="qtext">Show that <span class="m">(1 + √{3})² − 2√{3}</span> is a whole number.</div></div>
+        <details class="sol"><summary>Show solution</summary><div class="sol-body"><div class="steps">
+          <div class="step"><span class="m">(1 + √{3})² = 1 + 2√{3} + 3 = 4 + 2√{3}</span><span class="why">square the binomial</span></div>
+          <div class="step"><span class="m">4 + 2√{3} − 2√{3} = 4</span><span class="why">the like radicals cancel</span></div></div>
+          <p class="ans">Answer: the expression equals <span class="m">4</span>, a whole number.</p></div></details></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= DRILL ================= -->
+<section class="sec" id="drill">
+  <div class="sec-head">
+    <p class="eyebrow">Part 5</p>
+    <h2>Quick drill</h2>
+    <p class="muted">Endless random questions. Type your answer as a coefficient and a radicand: for <span class="m">6√{2}</span> enter 6 and 2. If no radical is left, enter 1 as the radicand.</p>
+  </div>
+  <div class="drill">
+    <div class="seg" role="group" aria-label="Question type">
+      <button type="button" data-mode="simp" aria-pressed="true">Simplify</button>
+      <button type="button" data-mode="add" aria-pressed="false">Add / subtract</button>
+      <button type="button" data-mode="mult" aria-pressed="false">Multiply</button>
+    </div>
+    <div class="dq" id="d-q" aria-live="polite"></div>
+    <div class="dans">
+      <label class="fld"><span>Coefficient</span><input id="d-c" type="text" inputmode="numeric" autocomplete="off"></label>
+      <span class="sym">√</span>
+      <label class="fld"><span>Radicand</span><input id="d-r" type="text" inputmode="numeric" autocomplete="off"></label>
+    </div>
+    <div class="btns">
+      <button class="btn" id="d-check">Check</button>
+      <button class="btn ghost" id="d-show">Show solution</button>
+      <button class="btn ghost" id="d-new">New question</button>
+    </div>
+    <div class="fb" id="d-fb" aria-live="polite"></div>
+    <div class="out" id="d-sol" hidden></div>
+    <p class="small" id="d-score"></p>
+  </div>
+</section>
+
+<!-- ================= KEY ================= -->
+<section class="sec" id="key">
+  <div class="sec-head">
+    <p class="eyebrow">Part 6</p>
+    <h2>Answer key</h2>
+    <p class="muted">Final answers only. Full explanations are under each question in Part 4.</p>
+  </div>
+  <details class="keybox">
+    <summary>Show answer key</summary>
+    <div class="gridwrap" style="margin-top:1rem">
+    <table class="key">
+      <thead><tr><th>#</th><th>Answer</th><th>#</th><th>Answer</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#q1">1</a></td><td class="m">6√{2}</td><td><a href="#q12">12</a></td><td class="m">12√{15}</td></tr>
+        <tr><td><a href="#q2">2</a></td><td class="m">15√{2}</td><td><a href="#q13">13</a></td><td class="m">3√{2} − 6</td></tr>
+        <tr><td><a href="#q3">3</a></td><td class="m">3∛{2}</td><td><a href="#q14">14</a></td><td class="m">−2 − 5√{5}</td></tr>
+        <tr><td><a href="#q4">4</a></td><td class="m">√{48}</td><td><a href="#q15">15</a></td><td class="m">5</td></tr>
+        <tr><td><a href="#q5">5</a></td><td class="m">4<i>x</i>√{3<i>x</i>}</td><td><a href="#q16">16</a></td><td class="m">23 − 6√{10}</td></tr>
+        <tr><td><a href="#q6">6</a></td><td class="m">4√{7}</td><td><a href="#q17">17</a></td><td class="m">2∛{3}</td></tr>
+        <tr><td><a href="#q7">7</a></td><td class="m">7√{3}</td><td><a href="#q18">18</a></td><td class="m">2<i>x</i> + √{<i>x</i>} − 3</td></tr>
+        <tr><td><a href="#q8">8</a></td><td class="m">3√{2}</td><td><a href="#q19">19</a></td><td class="m">3√{5} (√45 > √44)</td></tr>
+        <tr><td><a href="#q9">9</a></td><td class="m">√{5} + 2√{3}</td><td><a href="#q20">20</a></td><td class="m"><i>P</i> = 20√{2} cm, <i>A</i> = 42 cm²</td></tr>
+        <tr><td><a href="#q10">10</a></td><td class="m">6∛{2}</td><td><a href="#q21">21</a></td><td class="m">7 + 4√{3}</td></tr>
+        <tr><td><a href="#q11">11</a></td><td class="m">4√{3<i>x</i>}</td><td><a href="#q22">22</a></td><td class="m">4</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </details>
+</section>
+
+<footer>Covers simplifying, adding, subtracting and multiplying radicals. Dividing radicals and rationalizing denominators build directly on these skills, especially conjugates.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+
+function rad(inner, idx){
+  idx = idx || 2;
+  return '<span class="r' + (idx===3?' r3':'') + '">' + (idx===3?'<span class="ix">3</span>':'') +
+    '<span class="sr">' + (idx===3?'cube root of ':'square root of ') + '</span>' +
+    '<span class="sg" aria-hidden="true"></span><span class="rc">' + inner + '</span></span>';
+}
+// Render √{...} and ∛{...} markup in static content
+$$('[data-math]').forEach(el => {
+  el.innerHTML = el.innerHTML.replace(/([√∛])\{([^{}]*)\}/g, (_, s, inner) => rad(inner, s==='∛'?3:2));
+});
+
+function factor(n){ const f=[]; let p=2; while(p*p<=n){ while(n%p===0){ f.push(p); n/=p; } p++; } if(n>1) f.push(n); return f; }
+function counts(n){ const m=new Map(); factor(n).forEach(p=>m.set(p,(m.get(p)||0)+1)); return [...m.entries()].sort((a,b)=>a[0]-b[0]); }
+function simp(n, idx){ let out=1, inn=1; counts(n).forEach(([p,e])=>{ out*=p**Math.floor(e/idx); inn*=p**(e%idx); }); return {out, inn}; }
+function fmt(terms, idx){
+  idx = idx || 2;
+  const t = terms.filter(x=>x.c!==0);
+  if(!t.length) return '0';
+  return t.map((x,i)=>{
+    const neg = x.c<0, a=Math.abs(x.c);
+    const body = x.r===1 ? String(a) : (a===1?'':String(a)) + rad(x.r, idx);
+    return (i===0 ? (neg?'−':'') : (neg?' − ':' + ')) + body;
+  }).join('');
+}
+const M = s => '<span class="m">'+s+'</span>';
+const rootOf = (n, idx) => idx===3 ? Math.cbrt(n) : Math.sqrt(n);
+const dec = v => (Math.round(v*1000)/1000).toLocaleString('en-CA',{maximumFractionDigits:3});
+const toInt = v => { const s=String(v).trim().replace('−','-'); if(!/^-?\d+$/.test(s)) return NaN; return parseInt(s,10); };
+
+/* ---------- Tool 1: simplifier ---------- */
+function renderSimp(){
+  const idx = $('#s-idx3').checked ? 3 : 2;
+  const k = toInt($('#s-k').value), n = toInt($('#s-n').value);
+  const out = $('#s-out');
+  if(!Number.isInteger(n) || n<1 || n>1000000){ out.innerHTML = '<p class="err">Enter a whole-number radicand from 1 to 1,000,000.</p>'; return; }
+  if(!Number.isInteger(k) || k===0 || Math.abs(k)>999){ out.innerHTML = '<p class="err">Enter a non-zero whole-number coefficient. Use 1 if there is no number in front.</p>'; return; }
+  const word = idx===3 ? 'perfect cube' : 'perfect square';
+  const grpWord = idx===3 ? 'groups of three' : 'pairs';
+  const c = counts(n);
+  let chips = '';
+  c.forEach(([p,e])=>{
+    for(let g=0; g<Math.floor(e/idx); g++) chips += '<span class="grp">' + Array(idx).fill(p).join(' · ') + '<span class="tag">→ ' + p + ' out</span></span>';
+    for(let r=0; r<e%idx; r++) chips += '<span class="chip">' + p + '</span>';
+  });
+  if(n===1) chips = '<span class="small">1 has no prime factors, and its root is 1.</span>';
+  const {out:o, inn} = simp(n, idx);
+  const pp = o**idx;
+  const given = fmt([{c:k, r:n}], idx);
+  const answer = fmt([{c:k*o, r:inn}], idx);
+  let html = '';
+  html += '<div class="out-row"><span class="k">Prime factors of ' + n.toLocaleString('en-CA') + ' (' + grpWord + ' highlighted)</span><div class="chips">' + chips + '</div></div>';
+  if(o===1){
+    html += '<div class="out-row"><span class="k">Largest ' + word + ' factor</span><p>None bigger than 1, so ' + M(rad(n, idx)) + ' is already in simplest form.</p></div>';
+  } else {
+    html += '<div class="out-row"><span class="k">Largest ' + word + ' factor</span><p>' + M(pp + ' = ' + o + (idx===3?'³':'²')) + ', so ' + M(n + ' = ' + pp + ' × ' + inn) + '</p></div>';
+    html += '<div class="out-row"><span class="k">Split and simplify</span><p>' + M(given + ' = ' + (Math.abs(k)===1 ? (k<0?'−':'') : k + ' · ') + rad(pp, idx) + (inn>1 ? ' · ' + rad(inn, idx) : '') + ' = ' + answer) + '</p></div>';
+  }
+  html += '<div class="out-row"><span class="k">Simplest form</span><div class="result">' + answer + '</div></div>';
+  const big = Math.abs(k)**idx * n;
+  if(big <= 1e12){
+    let entire;
+    if(idx===2) entire = (k<0?'−':'') + rad((k*k*n).toLocaleString('en-CA'), 2);
+    else entire = rad((k**3*n).toLocaleString('en-CA').replace('-','−'), 3);
+    html += '<div class="out-row"><span class="k">Same value as an entire radical</span><p>' + M(entire) + (Math.abs(k)!==1 ? ' <span class="small">(coefficient ' + (idx===3?'cubed':'squared') + ' and moved inside' + (idx===2&&k<0?'; the negative sign stays outside':'') + ')</span>' : '') + '</p></div>';
+  }
+  html += '<p class="small">Decimal check: ' + dec(k*rootOf(n, idx)) + ' on both sides.</p>';
+  out.innerHTML = html;
+}
+['#s-k','#s-n'].forEach(s=>$(s).addEventListener('input', renderSimp));
+['#s-idx2','#s-idx3'].forEach(s=>$(s).addEventListener('change', renderSimp));
+$$('[data-sp]').forEach(b=>b.addEventListener('click', ()=>{
+  const [i,k,n] = b.dataset.sp.split(',').map(Number);
+  $(i===3?'#s-idx3':'#s-idx2').checked = true; $('#s-k').value=k; $('#s-n').value=n; renderSimp();
+}));
+renderSimp();
+
+/* ---------- Tool 2: combiner ---------- */
+const cState = {idx:2, terms:[{c:3,n:8},{c:-1,n:32},{c:1,n:27}]};
+function renderRows(){
+  const sym = cState.idx===3 ? '∛' : '√';
+  $('#c-rows').innerHTML = cState.terms.map((t,i)=>
+    '<div class="trow">' +
+    '<label class="fld"><span>Coefficient</span><input id="c-c'+i+'" type="number" step="1" value="'+t.c+'" data-i="'+i+'" data-k="c"></label>' +
+    '<span class="m sym" aria-hidden="true">'+sym+'</span>' +
+    '<label class="fld"><span>Radicand</span><input id="c-n'+i+'" type="number" min="1" step="1" value="'+t.n+'" data-i="'+i+'" data-k="n"></label>' +
+    '<button class="icon-btn" data-rm="'+i+'" aria-label="Remove term '+(i+1)+'"'+(cState.terms.length<=1?' disabled':'')+'>×</button>' +
+    '</div>').join('');
+  $('#c-add').disabled = cState.terms.length>=6;
+}
+function gcls(r, order){ if(r===1) return 'g0'; const nonInt = order.filter(x=>x!==1); return 'g' + ((nonInt.indexOf(r)%4)+1); }
+function renderCombine(){
+  const idx = cState.idx, out = $('#c-out'), terms = cState.terms;
+  if(terms.some(t=>!Number.isInteger(t.c) || Math.abs(t.c)>999 || !Number.isInteger(t.n) || t.n<1 || t.n>100000)){
+    out.innerHTML = '<p class="err">Each coefficient must be a whole number (up to ±999) and each radicand a whole number from 1 to 100,000.</p>'; return;
+  }
+  const sd = terms.map(t=>{ const s=simp(t.n, idx); return {c:t.c*s.out, r:s.inn, oc:t.c, on:t.n, o:s.out}; });
+  const order = []; sd.forEach(s=>{ if(!order.includes(s.r)) order.push(s.r); });
+  let html = '<div class="out-row"><span class="k">Expression</span><p>' + M(fmt(terms.map(t=>({c:t.c, r:t.n})), idx)) + '</p></div>';
+  html += '<div class="out-row"><span class="k">Step 1 · Simplify every term</span><ul class="slist">' + sd.map(s=>{
+    const note = s.oc===0 ? 'zero term' : (s.o===1 ? 'already simplest' : 'took out ' + rad(s.o**idx, idx) + ' = ' + s.o);
+    return '<li>' + M(fmt([{c:s.oc, r:s.on}], idx)) + '<span class="arrow">→</span><span class="m gt ' + gcls(s.r, order) + '">' + fmt([{c:s.c, r:s.r}], idx) + '</span><span class="small">' + note + '</span></li>';
+  }).join('') + '</ul></div>';
+  const sums = [];
+  html += '<div class="out-row"><span class="k">Step 2 · Group like radicals and combine coefficients</span><div class="grows">' + order.map(r=>{
+    const g = sd.filter(s=>s.r===r && s.c!==0);
+    const sum = g.reduce((a,s)=>a+s.c, 0);
+    sums.push({c:sum, r});
+    const label = r===1 ? 'Whole numbers' : 'Like ' + rad(r, idx) + ' terms';
+    return '<div class="grow ' + gcls(r, order) + '"><span class="k">' + label + '</span>' + M(fmt(g.map(s=>({c:s.c, r:s.r})), idx) + ' = ' + fmt([{c:sum, r}], idx)) + '</div>';
+  }).join('') + '</div></div>';
+  const final = sums.filter(s=>s.c!==0).sort((a,b)=>a.r-b.r);
+  html += '<div class="out-row"><span class="k">Step 3 · Answer</span><div class="result">' + fmt(final, idx) + '</div></div>';
+  if(final.filter(s=>s.r!==1).length>1) html += '<p class="small">Different radicands remain, so these terms cannot be combined any further.</p>';
+  out.innerHTML = html;
+}
+$('#c-rows').addEventListener('input', e=>{
+  const t = e.target; if(!t.dataset.k) return;
+  cState.terms[+t.dataset.i][t.dataset.k] = toInt(t.value);
+  renderCombine();
+});
+$('#c-rows').addEventListener('click', e=>{
+  const b = e.target.closest('[data-rm]'); if(!b || cState.terms.length<=1) return;
+  cState.terms.splice(+b.dataset.rm, 1); renderRows(); renderCombine();
+});
+$('#c-add').addEventListener('click', ()=>{
+  if(cState.terms.length>=6) return;
+  cState.terms.push({c:1, n:2}); renderRows(); renderCombine();
+  const i = cState.terms.length-1; const el = $('#c-c'+i); if(el) el.focus();
+});
+['#c-idx2','#c-idx3'].forEach(s=>$(s).addEventListener('change', ()=>{ cState.idx = $('#c-idx3').checked?3:2; renderRows(); renderCombine(); }));
+$$('[data-cp]').forEach(b=>b.addEventListener('click', ()=>{
+  const [i, ...ts] = b.dataset.cp.split('|');
+  cState.idx = +i; $(cState.idx===3?'#c-idx3':'#c-idx2').checked = true;
+  cState.terms = ts.map(s=>{ const [c,n]=s.split(',').map(Number); return {c, n}; });
+  renderRows(); renderCombine();
+}));
+renderRows(); renderCombine();
+
+/* ---------- Tool 3: binomial multiplier ---------- */
+const mIds = ['m-a1','m-b1','m-a2','m-b2','m-c1','m-d1','m-c2','m-d2'];
+function setM(vals){ mIds.forEach((id,i)=>{ $('#'+id).value = vals[i]; }); renderMult(); }
+function renderMult(){
+  const v = mIds.map(id=>toInt($('#'+id).value));
+  const out = $('#m-out');
+  const coefsOk = [0,2,4,6].every(i=>Number.isInteger(v[i]) && Math.abs(v[i])<=99);
+  const radsOk = [1,3,5,7].every(i=>Number.isInteger(v[i]) && v[i]>=1 && v[i]<=10000);
+  if(!coefsOk || !radsOk){ out.innerHTML = '<p class="err">Use whole-number coefficients from −99 to 99 and radicands from 1 to 10,000 (radicand 1 means a plain number).</p>'; return; }
+  const L = [{c:v[0], r:v[1]}, {c:v[2], r:v[3]}];
+  const R = [{c:v[4], r:v[5]}, {c:v[6], r:v[7]}];
+  const tStr = t => t.c===0 ? '0' : fmt([t]);
+  const same = L[0].c===R[0].c && L[0].r===R[0].r && L[1].c===R[1].c && L[1].r===R[1].r;
+  const prob = same ? '(' + fmt(L) + ')²' : '(' + fmt(L) + ')(' + fmt(R) + ')';
+  const prods = [];
+  let rows = '';
+  L.forEach((a, i)=>{
+    rows += '<tr><th scope="row">' + tStr(a) + '</th>';
+    R.forEach((b, j)=>{
+      const rc = a.c*b.c, rr = a.r*b.r, s = simp(rr, 2);
+      const fin = {c: rc*s.out, r: s.inn};
+      prods.push(fin);
+      let cell = rc===0 ? '0' : fmt([{c:rc, r:rr}]);
+      if(rc!==0 && rr!==fin.r) cell += ' <span class="fin">= ' + fmt([fin]) + '</span>';
+      else cell = '<span class="fin">' + cell + '</span>';
+      rows += '<td>' + cell + '</td>';
+    });
+    rows += '</tr>';
+  });
+  const map = new Map(); prods.forEach(p=>map.set(p.r, (map.get(p.r)||0) + p.c));
+  const final = [...map.entries()].map(([r,c])=>({c, r})).filter(t=>t.c!==0).sort((a,b)=>a.r-b.r);
+  let html = '<div class="out-row"><span class="k">Problem</span><p>' + M(prob) + '</p></div>';
+  html += '<div class="out-row"><span class="k">Multiply every pair (coefficient × coefficient, radicand × radicand)</span><div class="gridwrap"><table class="area"><thead><tr><th class="corner" scope="col">×</th><th scope="col">' + tStr(R[0]) + '</th><th scope="col">' + tStr(R[1]) + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+  html += '<div class="out-row"><span class="k">Collect like terms</span><p>' + M(fmt(prods) + ' = ' + fmt(final)) + '</p></div>';
+  html += '<div class="out-row"><span class="k">Answer</span><div class="result">' + fmt(final) + '</div></div>';
+  const hadRad = prods.some(p=>p.r!==1 && p.c!==0);
+  if(hadRad && !final.some(t=>t.r!==1)) html += '<p class="small">The radical terms cancelled, leaving a whole number. That is what happens when you multiply conjugates.</p>';
+  if(same) html += '<p class="small">This is a square of a binomial. The two middle cells are equal: that is the 2<i>ab</i> term.</p>';
+  out.innerHTML = html;
+}
+mIds.forEach(id=>$('#'+id).addEventListener('input', renderMult));
+$$('[data-mp]').forEach(b=>b.addEventListener('click', ()=>setM(b.dataset.mp.split(',').map(Number))));
+setM([2,3,1,1,1,3,-5,1]);
+
+/* ---------- Practice: open all ---------- */
+const openBtn = $('#open-all');
+openBtn.addEventListener('click', ()=>{
+  const ds = $$('#practice details.sol');
+  const anyClosed = ds.some(d=>!d.open);
+  ds.forEach(d=>d.open = anyClosed);
+  openBtn.textContent = anyClosed ? 'Close all solutions' : 'Open all solutions';
+});
+
+/* ---------- Drill ---------- */
+const SF = [2,3,5,6,7,10,11,13,14,15];
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const D = {mode:'simp', q:null, asked:0, right:0, checked:false};
+function makeQ(){
+  if(D.mode==='simp'){
+    let m, s; do { m = pick(SF); s = rnd(2,9); } while(s*s*m > 600);
+    const k = Math.random()<0.3 ? rnd(2,4) : 1;
+    const n = s*s*m;
+    return {
+      html: fmt([{c:k, r:n}]),
+      ans: {c:k*s, r:m},
+      sol: '<div class="steps"><div class="step">' + M(rad(n) + ' = ' + rad(s*s + ' · ' + m)) + '<span class="why">' + (s*s) + ' is the largest perfect square factor of ' + n + '</span></div>' +
+           '<div class="step">' + M('= ' + s + rad(m)) + '<span class="why">√' + (s*s) + ' = ' + s + '</span></div>' +
+           (k>1 ? '<div class="step">' + M(k + ' · ' + s + rad(m) + ' = ' + (k*s) + rad(m)) + '<span class="why">multiply by the coefficient</span></div>' : '') + '</div>'
+    };
+  }
+  if(D.mode==='add'){
+    const m = pick([2,3,5,6,7,10]); const s1 = rnd(1,6); let s2; do { s2 = rnd(1,6); } while(s2===s1);
+    const sign = Math.random()<0.5 ? 1 : -1;
+    const a = s1*s1*m, b = s2*s2*m;
+    const c = s1 + sign*s2;
+    const simpLine = (n, s) => s===1 ? M(rad(n)) + ' is already simplest' : M(rad(n) + ' = ' + rad(s*s + ' · ' + m) + ' = ' + s + rad(m));
+    return {
+      html: rad(a) + (sign>0?' + ':' − ') + rad(b),
+      ans: {c, r:m},
+      sol: '<div class="steps"><div class="step"><span>' + simpLine(a, s1) + '</span><span class="why">simplify the first term</span></div>' +
+           '<div class="step"><span>' + simpLine(b, s2) + '</span><span class="why">simplify the second term</span></div>' +
+           '<div class="step">' + M(fmt([{c:s1, r:m},{c:sign*s2, r:m}]) + ' = ' + fmt([{c, r:m}])) + '<span class="why">like radicals: ' + s1 + (sign>0?' + ':' − ') + s2 + ' = ' + String(c).replace('-','−') + '</span></div></div>'
+    };
+  }
+  const a = rnd(1,5), b = rnd(1,5); const p = pick(SF); let q; do { q = pick(SF); } while(q===p && Math.random()<0.6);
+  const s = simp(p*q, 2);
+  return {
+    html: '(' + fmt([{c:a, r:p}]) + ')(' + fmt([{c:b, r:q}]) + ')',
+    ans: {c:a*b*s.out, r:s.inn},
+    sol: '<div class="steps"><div class="step">' + M('= ' + (a*b) + rad(p*q)) + '<span class="why">' + a + ' · ' + b + ' = ' + (a*b) + ' and ' + p + ' · ' + q + ' = ' + (p*q) + '</span></div>' +
+         (s.out>1 ? '<div class="step">' + M(rad(p*q) + ' = ' + rad(s.out*s.out + ' · ' + s.inn) + ' = ' + fmt([{c:s.out, r:s.inn}])) + '<span class="why">simplify the radical</span></div>' +
+                    '<div class="step">' + M((a*b) + ' · ' + fmt([{c:s.out, r:s.inn}]) + ' = ' + fmt([{c:a*b*s.out, r:s.inn}])) + '<span class="why">multiply by the coefficient</span></div>'
+                  : '<div class="step"><span class="small">' + (p*q) + ' has no perfect-square factor, so this is simplest form.</span><span></span></div>') + '</div>'
+  };
+}
+function newQ(){
+  D.q = makeQ(); D.checked = false;
+  $('#d-q').innerHTML = D.q.html;
+  $('#d-c').value = ''; $('#d-r').value = '';
+  $('#d-fb').textContent = ''; $('#d-fb').className = 'fb';
+  $('#d-sol').hidden = true; $('#d-sol').innerHTML = '';
+}
+function score(){ $('#d-score').textContent = D.asked ? 'Right on the first try: ' + D.right + ' of ' + D.asked : ''; }
+function check(){
+  if(!D.q) return;
+  const cs = $('#d-c').value.trim().replace('−','-'), rs = $('#d-r').value.trim();
+  const c = cs==='' ? 1 : (cs==='-' ? -1 : toInt(cs));
+  const r = rs==='' ? 1 : toInt(rs);
+  const fb = $('#d-fb');
+  if(!Number.isInteger(c) || !Number.isInteger(r) || r<1){ fb.className='fb no'; fb.textContent = 'Enter whole numbers: a coefficient and a radicand of 1 or more.'; return; }
+  const A = D.q.ans;
+  const correct = c===A.c && r===A.r;
+  if(!D.checked){ D.asked++; if(correct) D.right++; D.checked = true; score(); }
+  if(correct){ fb.className='fb ok'; fb.textContent = 'Correct. That is simplest form.'; return; }
+  if(Math.sign(c)===Math.sign(A.c) && c*c*r === A.c*A.c*A.r){
+    const s = simp(r, 2);
+    fb.className='fb mid'; fb.textContent = 'Same value, but not fully simplified. ' + r + ' still has the perfect-square factor ' + (s.out*s.out) + '.'; return;
+  }
+  fb.className='fb no'; fb.textContent = 'Not quite. Check each step, or open the solution.';
+}
+$('#d-check').addEventListener('click', check);
+['#d-c','#d-r'].forEach(s=>$(s).addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+$('#d-new').addEventListener('click', newQ);
+$('#d-show').addEventListener('click', ()=>{
+  if(!D.q) return;
+  if(!D.checked){ D.asked++; D.checked = true; score(); }
+  const sol = $('#d-sol');
+  sol.innerHTML = '<div class="out-row"><span class="k">Worked solution</span>' + D.q.sol + '</div><div class="out-row"><span class="k">Answer</span><div class="result">' + fmt([D.q.ans]) + '</div></div>';
+  sol.hidden = false;
+});
+$$('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
+  D.mode = b.dataset.mode;
+  $$('[data-mode]').forEach(x=>x.setAttribute('aria-pressed', x===b ? 'true' : 'false'));
+  newQ();
+}));
+newQ();
+})();
+</script>
+
+</body>
+</html>
